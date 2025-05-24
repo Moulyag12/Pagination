@@ -1,14 +1,20 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 import ProductCard from '../src/ProductCard';
+import { useMemo } from 'react';
+
 function App() {
   const[products,setProducts]=useState([]);
   const[currentPage,setCurrentPage]=useState(0);
   const PAGE_SIZE=10;
    const totalSize=products.length;
    const noofpages=Math.ceil(totalSize/PAGE_SIZE);
-   const start=currentPage+PAGE_SIZE;
-   const end=start+PAGE_SIZE;
+  
+const PaginationProduct=useMemo(()=>{
+  const start=currentPage*PAGE_SIZE;
+  const end=start+PAGE_SIZE;
+  return products.slice(start, end);
+  },[products,currentPage]);
 
   const fetchData= async()=>{
   const data=await fetch('https://dummyjson.com/products?limit=500');
@@ -31,7 +37,7 @@ fetchData();
     ))]}</div>
     <div className="App">
        {
-           products.slice(start,end).map((p)=>(
+           PaginationProduct.map((p)=>(
            <ProductCard key={p.id} image={p.thumbnail} title={p.title}/>
            ))}
     </div>
